@@ -86,9 +86,7 @@ const Main: React.FC = () => {
           success = false;
         }
       })
-      .catch((error: any) => {
-        console.log(error);
-      });
+      .catch((error: any) => {});
     return success;
   };
 
