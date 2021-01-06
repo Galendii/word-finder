@@ -22,6 +22,8 @@ export const Form = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  text-align: center;
   width: min(600px, 100%);
   min-height: 90vh;
   z-index: 1;
@@ -33,6 +35,7 @@ export const Title = styled.h1`
 
 export const Description = styled.h4`
   color: #dfdfdf;
+  padding: 12px;
 `;
 
 export const Footer = styled.img`

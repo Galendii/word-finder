@@ -14,6 +14,8 @@ export const Container = styled.div`
     39;
   } */
   cursor: text;
+  -webkit-box-shadow: 1px 4px 15px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 1px 4px 15px 5px rgba(0, 0, 0, 0.2);
 `;
 
 export const IconHolder = styled.button`
