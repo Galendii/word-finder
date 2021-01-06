@@ -1,7 +1,15 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { BsSearch } from 'react-icons/bs';
+import Card from '../../Components/Card';
 import IconTextInput from '../../Components/IconTextInput';
+import PrimarySelect from '../../Components/PrimarySelect';
+import {
+  EN_DESCRIPTION,
+  ES_DESCRIPTION,
+  PT_DESCRIPTION,
+} from '../../Constants/description';
+import { EN_TITLE, ES_TITLE, PT_TITLE } from '../../Constants/titles';
 // import IconTextInput from '../../Components/IconTextInput';
 
 import { Container, Description, Form, Title } from './styles';
@@ -10,6 +18,12 @@ const Main: React.FC = () => {
   const [text, setText] = useState('');
   const [wordsArray, setWordsArray] = useState<string[]>([]);
   const [trueWords, setTrueWords] = useState<string[]>([]);
+  const [language, setLanguage] = useState<string>('en');
+  const [page, setPage] = useState<number>(0);
+
+  useEffect(() => {
+    console.log(trueWords);
+  }, [trueWords]);
 
   const getFactorial = (amount: number): number => {
     let value = 0;
@@ -75,23 +89,21 @@ const Main: React.FC = () => {
     return finished;
   };
 
-  const dictionarySearch = async (word: string): Promise<boolean> => {
-    let success = false;
+  const dictionarySearch = async (word: string): Promise<any> => {
+    let response;
     await axios
-      .get(`https://api.dicionario-aberto.net/word/${word}`)
+      .get(`https://api.dictionaryapi.dev/api/v2/entries/${language}/${word}`)
       .then(({ data }: any) => {
-        if (data[0]) {
-          success = true;
-        } else {
-          success = false;
-        }
+        response = { ...data };
       })
-      .catch((error: any) => {});
-    return success;
+      .catch(() => {
+        response = false;
+      });
+    return response;
   };
 
   const handleSubmit = (): void => {
-    // setTrueWords([]);
+    setTrueWords([]);
     const letters = text.split('');
     const amount = letters.length;
 
@@ -106,16 +118,23 @@ const Main: React.FC = () => {
         wordsArray.map(async (word) => {
           const status = await dictionarySearch(word);
           if (status) {
-            return word;
+            return status;
           }
           return null;
         }),
       ).then((values) => {
-        const array: string[] = [];
+        let array: any[] = [];
         Promise.all(
           values.map((value) => {
             if (value) {
-              array.push(value);
+              if (Object.keys(value).length > 1) {
+                // for (let i = 0; i < value.length; i++) {
+                //   array.push(value[i]);
+                // }
+                array = [...array, ...Object.values(value)];
+              } else {
+                array.push(value[0]);
+              }
             }
           }),
         ).then(() => {
@@ -127,15 +146,74 @@ const Main: React.FC = () => {
     }
   };
 
+  const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>): void => {
+    const { value } = e.target;
+    setLanguage(value);
+  };
+
+  const handleDescription = (): string => {
+    switch (language) {
+      case 'en':
+        return EN_DESCRIPTION;
+
+      case 'pt-BR':
+        return PT_DESCRIPTION;
+      case 'es':
+        return ES_DESCRIPTION;
+      default:
+        return 'error';
+    }
+  };
+
+  const handleTitle = (): string => {
+    switch (language) {
+      case 'en':
+        return EN_TITLE;
+
+      case 'pt-BR':
+        return PT_TITLE;
+      case 'es':
+        return ES_TITLE;
+      default:
+        return 'error';
+    }
+  };
+
+  const handlePage = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    action: string,
+  ): void => {
+    console.log(action);
+    if (action === 'next' && page < trueWords.length) {
+      setPage(page + 1);
+    } else if (page > 0) {
+      setPage(page - 1);
+    }
+  };
   return (
     <Container>
       <Form>
-        <Title>Desembaralhador de Letras</Title>
-        <Description>
-          Praesent sapien massa, convallis a pellentesque nec, egestas non nisi.
-          Donec rutrum congue leo eget malesuada. Sed porttitor lectus nibh.
-          Nulla quis lorem ut libero malesuada feugiat.
-        </Description>
+        <Title>{handleTitle()}</Title>
+        <Description>{handleDescription()}</Description>
+
+        <PrimarySelect
+          values={[
+            {
+              name: 'English',
+              value: 'en',
+            },
+            {
+              name: 'Português',
+              value: 'pt-BR',
+            },
+            {
+              name: 'Español',
+              value: 'es',
+            },
+          ]}
+          defaultValue={language}
+          onChange={(e) => handleSelect(e)}
+        />
 
         <IconTextInput
           icon={BsSearch}
@@ -146,11 +224,12 @@ const Main: React.FC = () => {
           onChange={(e) => setText(e.target.value)}
         />
         {trueWords.length > 0 && (
-          <>
-            {trueWords.map((word) => (
-              <span key={word}>{word}</span>
-            ))}
-          </>
+          <Card
+            pageFunction={handlePage}
+            title="Palavras Formadas"
+            text="teste"
+            dataText={trueWords[page]}
+          />
         )}
       </Form>
     </Container>
