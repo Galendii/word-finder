@@ -28,10 +28,13 @@
     "no-use-before-define": "off",
     "no-plusplus": "off",
     "no-ternary": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-vars": "off",
     "no-param-reassign": "off",
     "array-callback-return": "off",
     "consistent-return": "off",
     "@typescript-eslint/no-use-before-define": ["error"],
+    "@typescript-eslint/explicit-module-boundary-types": "off",
     "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
     "react/jsx-filename-extension": [
       1,

@@ -151,7 +151,6 @@ const Main: React.FC = () => {
         wordsArray.map(async (word) => {
           const status = await dictionarySearch(word);
           if (status) {
-            console.log(status);
             return status;
           }
           return null;
