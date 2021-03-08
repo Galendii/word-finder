@@ -8,6 +8,7 @@ export const Button = styled.button`
   font-size: 1.2rem;
   color: #fff;
   font-weight: bold;
+  font-family: var(--title-font);
 
   background: #007087;
   border: unset;

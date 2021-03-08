@@ -9,6 +9,7 @@ export const Select = styled.select`
   text-align: center;
   font-weight: bold;
   color: #eee;
+  font-family: var(--title-font);
 
   -webkit-box-shadow: 1px 4px 15px 5px rgba(0, 0, 0, 0.2);
   box-shadow: 1px 4px 15px 5px rgba(0, 0, 0, 0.2);

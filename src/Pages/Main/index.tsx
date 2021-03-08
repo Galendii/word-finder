@@ -1,15 +1,29 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { BsSearch } from 'react-icons/bs';
+import { toast } from 'react-toastify';
 import Card from '../../Components/Card';
 import IconTextInput from '../../Components/IconTextInput';
 import PrimarySelect from '../../Components/PrimarySelect';
 import {
   EN_DESCRIPTION,
-  ES_DESCRIPTION,
+  EN_ERROR,
+  EN_TEXT,
+  EN_TITLE,
+} from '../../Constants/english';
+import {
   PT_DESCRIPTION,
-} from '../../Constants/description';
-import { EN_TITLE, ES_TITLE, PT_TITLE } from '../../Constants/titles';
+  PT_ERROR,
+  PT_TEXT,
+  PT_TITLE,
+} from '../../Constants/portuguese';
+import {
+  ES_DESCRIPTION,
+  ES_ERROR,
+  ES_TEXT,
+  ES_TITLE,
+} from '../../Constants/spanish';
+
 // import IconTextInput from '../../Components/IconTextInput';
 
 import { Container, Description, Form, Title } from './styles';
@@ -18,12 +32,29 @@ const Main: React.FC = () => {
   const [text, setText] = useState('');
   const [wordsArray, setWordsArray] = useState<string[]>([]);
   const [trueWords, setTrueWords] = useState<string[]>([]);
-  const [language, setLanguage] = useState<string>('en');
+  const [language, setLanguage] = useState<string>('pt-BR');
   const [page, setPage] = useState<number>(0);
+  const [opened, setOpened] = useState<boolean>(true);
 
   useEffect(() => {
-    console.log(trueWords);
-  }, [trueWords]);
+    if (opened) {
+      setTrueWords([]);
+    }
+  }, [opened]);
+
+  const handleError = (): string => {
+    switch (language) {
+      case 'en':
+        return EN_ERROR;
+
+      case 'pt-BR':
+        return PT_ERROR;
+      case 'es':
+        return ES_ERROR;
+      default:
+        return 'error';
+    }
+  };
 
   const getFactorial = (amount: number): number => {
     let value = 0;
@@ -104,6 +135,8 @@ const Main: React.FC = () => {
 
   const handleSubmit = (): void => {
     setTrueWords([]);
+    setOpened(true);
+    setPage(0);
     const letters = text.split('');
     const amount = letters.length;
 
@@ -118,6 +151,7 @@ const Main: React.FC = () => {
         wordsArray.map(async (word) => {
           const status = await dictionarySearch(word);
           if (status) {
+            console.log(status);
             return status;
           }
           return null;
@@ -138,6 +172,9 @@ const Main: React.FC = () => {
             }
           }),
         ).then(() => {
+          if (array.length === 0) {
+            toast.error(handleError());
+          }
           setTrueWords([...array]);
         });
       });
@@ -146,6 +183,20 @@ const Main: React.FC = () => {
     }
   };
 
+  const handlePage = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    action: string,
+  ): void => {
+    if (action === 'next') {
+      if (page >= trueWords.length - 1) {
+        setPage(0);
+      } else {
+        setPage(page + 1);
+      }
+    } else if (page > 0) {
+      setPage(page - 1);
+    }
+  };
   const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>): void => {
     const { value } = e.target;
     setLanguage(value);
@@ -179,15 +230,17 @@ const Main: React.FC = () => {
     }
   };
 
-  const handlePage = (
-    e: React.MouseEvent<HTMLButtonElement>,
-    action: string,
-  ): void => {
-    console.log(action);
-    if (action === 'next' && page < trueWords.length) {
-      setPage(page + 1);
-    } else if (page > 0) {
-      setPage(page - 1);
+  const handleCardText = (): string => {
+    switch (language) {
+      case 'en':
+        return EN_TEXT;
+
+      case 'pt-BR':
+        return PT_TEXT;
+      case 'es':
+        return ES_TEXT;
+      default:
+        return 'error';
     }
   };
   return (
@@ -220,15 +273,16 @@ const Main: React.FC = () => {
           clickHandler={handleSubmit}
           name="search"
           placeholder="----------"
-          maxLength={10}
+          maxLength={5}
           onChange={(e) => setText(e.target.value)}
         />
-        {trueWords.length > 0 && (
+        {trueWords.length > 0 && opened && (
           <Card
             pageFunction={handlePage}
-            title="Palavras Formadas"
-            text="teste"
+            title={handleCardText()}
+            page={page}
             dataText={trueWords[page]}
+            closeFunction={setOpened}
           />
         )}
       </Form>

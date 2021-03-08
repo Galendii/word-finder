@@ -11,50 +11,58 @@ import {
   Next,
   Holder,
   Close,
+  Definitions,
+  Word,
+  Speech,
+  WordContainer,
 } from './styles';
 
 interface CardProps {
   title: string;
   text?: string | null;
   dataText?: any;
+  page?: number;
   pageFunction: (
     event: React.MouseEvent<HTMLButtonElement>,
     action: string,
   ) => void;
+  closeFunction: (open: boolean) => void;
 }
 
 const defaultProps: Partial<CardProps> = {
   text: null,
   dataText: null,
+  page: 1,
 };
 
 const Card = ({
   title,
   text,
+  page,
   dataText,
   pageFunction,
+  closeFunction,
 }: CardProps): ReactElement => {
   const mapData = (): ReactElement => {
     const definitionsMap = (meaning: any): ReactElement => {
       return meaning.definitions.map((value: any) => (
         <>
-          <span>{value.definition}</span>
-          <br />
+          <Definitions>{value.definition}</Definitions>
         </>
       ));
     };
 
     return (
       <>
-        <span>
-          {dataText.word} {dataText?.phonetics[0]?.text}
-        </span>
+        <Word>
+          {dataText.word} <span>{dataText?.phonetics[0]?.text}</span>
+        </Word>
         {dataText.meanings.map((meaning: any) => (
           <>
-            <br />
+            <Speech>
+              {meaning.partOfSpeech !== 'undefined' && meaning.partOfSpeech}
+            </Speech>
 
-            <span>{meaning.partOfSpeech}</span>
-            <br />
             {definitionsMap(meaning)}
           </>
         ))}
@@ -67,12 +75,12 @@ const Card = ({
       <Backdrop />
       <Holder>
         <Container>
-          <Button>
+          <Button onClick={() => closeFunction(false)}>
             <Close />
           </Button>
           <Title>{title}</Title>
           {text && <Text>{text}</Text>}
-          {dataText && mapData()}
+          <WordContainer>{dataText && mapData()}</WordContainer>
           {dataText && (
             <ButtonRow>
               <Button
@@ -83,6 +91,7 @@ const Card = ({
               >
                 <Previous />
               </Button>
+              {page}
               <Button
                 name="next"
                 onClick={(e: React.MouseEvent<HTMLButtonElement>) => {

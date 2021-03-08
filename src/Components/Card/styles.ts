@@ -58,3 +58,30 @@ export const Close = styled(BsX)`
   top: 10px;
   right: 20px;
 `;
+
+export const Word = styled.div`
+  font-family: var(--title-font);
+  font-size: 1.3rem;
+  margin: 5px;
+  span {
+    font-size: 1rem;
+  }
+`;
+
+export const Speech = styled.div`
+  margin-bottom: 5px;
+
+  font-family: var(--title-font);
+  text-transform: uppercase;
+`;
+
+export const Definitions = styled.div`
+  margin: 5px;
+`;
+
+export const WordContainer = styled.div`
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;

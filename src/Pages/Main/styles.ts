@@ -31,11 +31,14 @@ export const Form = styled.div`
 
 export const Title = styled.h1`
   color: #dfdfdf;
+  font-family: var(--title-font);
+  font-weight: bold;
 `;
 
 export const Description = styled.h4`
   color: #dfdfdf;
   padding: 12px;
+  font-family: var(--text-font);
 `;
 
 export const Footer = styled.img`
